@@ -1,0 +1,18 @@
+#!/bin/bash
+a=192.168.4.15:80   (定义变量)
+b=192.168.4.100
+c=192.168.4.200
+while :
+do
+        for ip in $b $c
+                do
+        curl http://$ip &>/dev/null
+        if [ $? -eq 0 ];then
+        ipvsadm -Ln | grep  $ip ||ipvsadm -a -t $a -r $ip
+        else
+        ipvsadm -Ln | grep $ip && ipvsadm -d -t $a -r $ip
+
+        fi
+        sleep 3
+        done
+done
