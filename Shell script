@@ -1,0 +1,29 @@
+编写监控脚本
+CPU负载
+网卡流量
+内存剩余容量
+磁盘剩余容量
+计算机账户数量
+当前登录账户数量
+计算机当前开启的进程数量
+本机已安装的软件包数量
+#!/bin/bash
+while :
+do
+uptime | awk '{print "cpu平均负载是 " $8 $9 $10}'
+ifconfig eth0 | awk '/RX p/{print "网卡接受的数据量是 " $5 "字节"}'
+ifconfig eth0 | awk '/TX p/{print "网卡发送的数据量是 " $5 "字节"}'
+free -m | awk '/Mem/{print "服务器剩余内存是" $4 "M"}'
+df -h | awk '/vda1/{print "服务器剩余"$4 "已使用 " $5}'
+user=`cat /etc/passwd | wc -l`
+echo "本服务器账户总数为$user个"
+u=`who | wc -l`
+echo "本服务器当前登录$u个"
+p=`ps aux | wc -l`
+echo "当前服务器开启的进程数为$p个"
+r=`rpm -qa | wc -l`
+echo "当前服务器安装了$r个软件包"
+
+sleep 5
+clear
+done
